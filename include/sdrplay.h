@@ -33,6 +33,12 @@ namespace sdrplay {
 	/* Stream */
 	void StreamInit(const Nan::FunctionCallbackInfo<v8::Value>& args);
 	void StreamUninit(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void SetRf(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void SetFs(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void ResetUpdateFlags(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void DecimateControl(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void SetSyncUpdateSampleNum(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void SetSyncUpdatePeriod(const Nan::FunctionCallbackInfo<v8::Value>& args);
 
 	/* device selection */
 	void SetDeviceIdx(const Nan::FunctionCallbackInfo<v8::Value>& args);
@@ -52,4 +58,12 @@ namespace sdrplay {
 	void RSPII_BiasTControl(const Nan::FunctionCallbackInfo<v8::Value>& args);
 	void RSPII_RfNotchEnable(const Nan::FunctionCallbackInfo<v8::Value>& args);
 	void AmPortSelect(const Nan::FunctionCallbackInfo<v8::Value>& args);
+
+	/* Gain */
+	void SetGr(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void SetGrParams(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void RSP_SetGr(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void RSP_SetGrLimits(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void AgcControl(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void GetCurrentGain(const Nan::FunctionCallbackInfo<v8::Value>& args);
 }

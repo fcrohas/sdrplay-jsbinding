@@ -3,9 +3,16 @@
 namespace sdrplay {
 
   NAN_MODULE_INIT(init) {
-    SetMethod(target, "ApiVersion", ApiVersion);
+    // Stream
     SetMethod(target, "StreamUninit", StreamUninit);
     SetMethod(target, "StreamInit", StreamInit);
+    SetMethod(target, "SetRf", StreamInit);
+    SetMethod(target, "SetFs", StreamInit);
+    SetMethod(target, "ResetUpdateFlags", ResetUpdateFlags);
+    SetMethod(target, "DecimateControl", DecimateControl);
+    SetMethod(target, "SetSyncUpdateSampleNum", SetSyncUpdateSampleNum);
+    SetMethod(target, "SetSyncUpdatePeriod", SetSyncUpdatePeriod);
+    // Settings
     SetMethod(target, "DebugEnable", DebugEnable);
     SetMethod(target, "SetPpm", SetPpm);
     SetMethod(target, "SetDcTrackTime", SetDcTrackTime);
@@ -13,10 +20,11 @@ namespace sdrplay {
     SetMethod(target, "DCoffsetIQimbalanceControl", DCoffsetIQimbalanceControl);
     SetMethod(target, "SetLoMode", SetLoMode);
     SetMethod(target, "SetTransferMode", SetTransferMode);
-    
+    // device check
+    SetMethod(target, "ApiVersion", ApiVersion);    
     SetMethod(target, "GetHwVersion", GetHwVersion);
     SetMethod(target, "GetDevices", GetDevices);
-
+    // Device
     SetMethod(target, "ReleaseDeviceIdx", ReleaseDeviceIdx);
     SetMethod(target, "SetDeviceIdx", SetDeviceIdx);
     // Specific RSP 2
@@ -25,8 +33,14 @@ namespace sdrplay {
     SetMethod(target, "RSPII_BiasTControl", RSPII_BiasTControl);
     SetMethod(target, "RSPII_RfNotchEnable", RSPII_RfNotchEnable);
     SetMethod(target, "AmPortSelect", AmPortSelect);
+    // Gain
+    SetMethod(target, "SetGr", SetGr);
+    SetMethod(target, "SetGrParams", SetGrParams);
+    SetMethod(target, "RSP_SetGr", RSP_SetGr);
+    SetMethod(target, "RSP_SetGrLimits", RSP_SetGrLimits);
     
-    
+    SetMethod(target, "AgcControl", AgcControl);
+    SetMethod(target, "GetCurrentGain", GetCurrentGain);
   }
 
   NODE_MODULE(sdrplay, init)

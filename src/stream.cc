@@ -1,7 +1,8 @@
 #include "sdrplay.h"
 
 namespace sdrplay {
-
+	// static uv_mutex_t mutex;
+	static uv_cond_t isStreamRunning;
 	struct stream_params_t {
 		int gRdB;
 		double fsMHz;
@@ -26,17 +27,10 @@ namespace sdrplay {
 	  thread* streamWorker;
 	};
 
-	static bool isStreamRunning = false;
-
 	void sdrplay_gainCallback(unsigned int gRdB,unsigned int lnaGRdB, void *cbContext) {
 		// cout << "gRdB=" << gRdB << " lnaGRdB=" << lnaGRdB;
 		request_t *request = (request_t*)cbContext;
-		int err = uv_mutex_trylock(&request->async_lock);  
-		if (err) {
-			// Mutex not initliaed so initialized it in this thread
-			uv_mutex_init(&request->async_lock);
-			uv_mutex_lock(&request->async_lock);
-		}
+		uv_mutex_lock(&request->async_lock);  
 		sdrplay_t * SDRPlay = new sdrplay_t();
 		SDRPlay->gRdB = gRdB;
 		SDRPlay->lnaGRdB = lnaGRdB;
@@ -56,12 +50,7 @@ namespace sdrplay {
 	  }
 	  // cout << "sdrplay_streamCallback\r\n";
 	  request_t *request = (request_t*)cbContext;
-	  int err = uv_mutex_trylock(&request->async_lock);  
-	  if (err) {
-	  	// Mutex not initliaed so initialized it in this thread
-	  	uv_mutex_init(&request->async_lock);
-	  	uv_mutex_lock(&request->async_lock);
-	  }
+	  uv_mutex_lock(&request->async_lock);  
 	  sdrplay_t * SDRPlay = new sdrplay_t();
 	  // Fill data struct
 	  SDRPlay->grChanged = grChanged;
@@ -90,7 +79,9 @@ namespace sdrplay {
 
 	NAUV_WORK_CB(HandleStreamCallback) {
 		// cout << "Filling javascript parameters !!\r\n";
+
 		request_t *request = (request_t*)async->data;
+		uv_mutex_lock(&request->async_lock);
 		sdrplay_t *SDRPlay = request->sdrplay;
 		Nan::HandleScope scope;
 		if (request->fromGainCallback) {
@@ -114,12 +105,11 @@ namespace sdrplay {
 			// cout << "Calling javascript stream callback !!\r\n";
 			request->streamCallback->Call(argc, argv);
 			// cout << "Freeing memory\r\n";
-			// uv_mutex_lock(&request->async_lock);
 			// delete[] SDRPlay->xi;
 			// delete[] SDRPlay->xq;
 			// delete SDRPlay;
-			// uv_mutex_unlock(&request->async_lock);
 		}
+		uv_mutex_unlock(&request->async_lock);
 	}
 
 	void startStream (stream_params_t streamParams, request_t request) {
@@ -139,11 +129,12 @@ namespace sdrplay {
 			cout << "Error while initializing stream. Error : " << error << "\r\n";
 			return;
 		}
-		// Keep running thread
-		while(isStreamRunning) {
-			// Pause more time
-			Sleep(10000);
-		}
+		uv_cond_wait(&isStreamRunning, &request.async_lock);
+		// // Keep running thread
+		// while(isStreamRunning) {
+		// 	// Pause more time
+		// 	Sleep(10000);
+		// }
 		// terminate();
 		delete request.streamWorker;
 	}
@@ -175,7 +166,8 @@ namespace sdrplay {
 	  // Context
 	  request.streamCallback = new Nan::Callback(args[9].As<Function>());
 	  request.gainCallback = new Nan::Callback(args[10].As<Function>());
-	  isStreamRunning = true;	  
+	  uv_cond_init(&isStreamRunning);
+	  uv_mutex_init(&request.async_lock);
 	  uv_async_init(
 		    uv_default_loop()
 		  , request.async
@@ -194,8 +186,104 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "No argument needed.")));
 	    return;
 	  }  
-	  isStreamRunning = false;
+	  uv_cond_signal(&isStreamRunning);
 	  mir_sdr_ErrT error = mir_sdr_StreamUninit();
+	  if (error!= mir_sdr_Success) {
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
+	    return;
+	  }
+	}
+
+	void SetRf(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+	  Isolate* isolate = args.GetIsolate();
+	  if (args.Length() != 3) {
+	    // Throw an Error that is passed back to JavaScript
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Wrong argument count.")));
+	    return;
+	  }  
+	  mir_sdr_ErrT error = mir_sdr_SetRf(args[0]->NumberValue(), args[1]->Int32Value(), args[2]->Int32Value());
+	  if (error!= mir_sdr_Success) {
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
+	    return;
+	  }
+	}
+
+	void SetFs(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+	  Isolate* isolate = args.GetIsolate();
+	  if (args.Length() != 4) {
+	    // Throw an Error that is passed back to JavaScript
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Wrong argument count.")));
+	    return;
+	  }  
+	  mir_sdr_ErrT error = mir_sdr_SetFs(args[0]->NumberValue(), args[1]->Int32Value(), args[2]->Int32Value(), args[3]->Int32Value());
+	  if (error!= mir_sdr_Success) {
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
+	    return;
+	  }
+	}
+
+	void ResetUpdateFlags(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+	  Isolate* isolate = args.GetIsolate();
+	  if (args.Length() != 3) {
+	    // Throw an Error that is passed back to JavaScript
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Wrong argument count.")));
+	    return;
+	  }  
+	  mir_sdr_ErrT error = mir_sdr_ResetUpdateFlags(args[0]->Int32Value(), args[1]->Int32Value(), args[2]->Int32Value());
+	  if (error!= mir_sdr_Success) {
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
+	    return;
+	  }
+	}
+
+	void SetSyncUpdateSampleNum(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+	  Isolate* isolate = args.GetIsolate();
+	  if (args.Length() != 1) {
+	    // Throw an Error that is passed back to JavaScript
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Wrong argument count.")));
+	    return;
+	  }  
+	  mir_sdr_ErrT error = mir_sdr_SetSyncUpdateSampleNum(args[0]->Uint32Value());
+	  if (error!= mir_sdr_Success) {
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
+	    return;
+	  }
+	}
+
+	void SetSyncUpdatePeriod(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+	  Isolate* isolate = args.GetIsolate();
+	  if (args.Length() != 1) {
+	    // Throw an Error that is passed back to JavaScript
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Wrong argument count.")));
+	    return;
+	  }  
+	  mir_sdr_ErrT error = mir_sdr_SetSyncUpdatePeriod(args[0]->Uint32Value());
+	  if (error!= mir_sdr_Success) {
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
+	    return;
+	  }
+	}
+
+	void DecimateControl(const Nan::FunctionCallbackInfo<v8::Value>& args) {
+	  Isolate* isolate = args.GetIsolate();
+	  if (args.Length() != 3) {
+	    // Throw an Error that is passed back to JavaScript
+	    isolate->ThrowException(Exception::TypeError(
+	        String::NewFromUtf8(isolate, "Wrong argument count.")));
+	    return;
+	  }  
+	  mir_sdr_ErrT error = mir_sdr_DecimateControl(args[0]->Uint32Value(), args[1]->Uint32Value(), args[2]->Uint32Value());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));

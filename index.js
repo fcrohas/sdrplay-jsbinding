@@ -14,14 +14,17 @@ console.log("Single method HW version : "+sdrplay.GetHwVersion());
 sdrplay.SetDeviceIdx(0);
 // Start stream handle
 sdrplay.StreamInit(38, 2.100000, 105.0,1536,0,0,28,0,128, function(xi,xq,firstSampleNum,grChanged,rfChanged,fsChanged,numSamples, reset) {
-	console.log("firstSampleNum="+firstSampleNum+" xi="+xi.length+" numSamples="+numSamples);
+	// console.log("firstSampleNum="+firstSampleNum+" xi="+xi.length+" numSamples="+numSamples);
 }, function(gRdB, lnagRdB) {
 	console.log("gRdb="+gRdB+" lnagRdB="+lnagRdB);
 });
+setTimeout(function() {
+	sdrplay.SetGr(38,1,0);
+}, 2000);
 
 setTimeout(function() {
 	sdrplay.StreamUninit();
 	// Release device
 	sdrplay.ReleaseDeviceIdx();
     console.log('program exit...');
-}, 3000);// stop stream
+}, 5000);// stop stream
