@@ -45,6 +45,7 @@ namespace sdrplay {
 	void DecimateControl(const Nan::FunctionCallbackInfo<v8::Value>& args);
 	void SetSyncUpdateSampleNum(const Nan::FunctionCallbackInfo<v8::Value>& args);
 	void SetSyncUpdatePeriod(const Nan::FunctionCallbackInfo<v8::Value>& args);
+	void ReInit(const Nan::FunctionCallbackInfo<v8::Value>& args);
 
 	/* device selection */
 	void SetDeviceIdx(const Nan::FunctionCallbackInfo<v8::Value>& args);

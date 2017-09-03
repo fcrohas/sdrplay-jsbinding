@@ -354,14 +354,15 @@ namespace sdrplay {
 	  int gRdB = args[0]->Uint32Value();
 	  double fsMHz = args[1]->NumberValue();
 	  double rfMHz = args[2]->NumberValue();
-	  unsigned int bwType = static_cast<mir_sdr_Bw_MHzT>(args[3]->Uint32Value());
-	  unsigned int ifType = static_cast<mir_sdr_If_kHzT>(args[4]->Uint32Value());
-	  int LNAState = args[5]->Uint32Value();
-	  int gRdBsystem = args[6]->Uint32Value();
-	  unsigned int setGrMode = static_cast<mir_sdr_SetGrModeT>(args[7]->Uint32Value());
-	  int samplesPerPacket = args[8]->Uint32Value();
-	  unsigned int reasonForReinit = args[9]->Uint32Value();
-	  mir_sdr_ErrT error = mir_sdr_Reinit(&gRdB, fsMHz, rfMHz, bwType, ifType, 0, LNAState, &gRdBsystem, setGrMode, &samplesPerPacket, reasonForReinit);
+	  mir_sdr_Bw_MHzT bwType = static_cast<mir_sdr_Bw_MHzT>(args[3]->Uint32Value());
+	  mir_sdr_If_kHzT ifType = static_cast<mir_sdr_If_kHzT>(args[4]->Uint32Value());
+	  mir_sdr_LoModeT loMode = static_cast<mir_sdr_LoModeT>(args[5]->Uint32Value());
+	  int LNAState = args[6]->Uint32Value();
+	  int gRdBsystem = args[7]->Uint32Value();
+	  mir_sdr_SetGrModeT setGrMode = static_cast<mir_sdr_SetGrModeT>(args[8]->Uint32Value());
+	  int samplesPerPacket = args[9]->Uint32Value();
+	  mir_sdr_ReasonForReinitT reasonForReinit = static_cast<mir_sdr_ReasonForReinitT>(args[10]->Uint32Value());
+	  mir_sdr_ErrT error = mir_sdr_Reinit(&gRdB, fsMHz, rfMHz, bwType, ifType, loMode, LNAState, &gRdBsystem, setGrMode, &samplesPerPacket, reasonForReinit);
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to ReInit stream.")));
