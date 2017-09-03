@@ -6,12 +6,13 @@ namespace sdrplay {
     // Stream
     SetMethod(target, "StreamUninit", StreamUninit);
     SetMethod(target, "StreamInit", StreamInit);
-    SetMethod(target, "SetRf", StreamInit);
-    SetMethod(target, "SetFs", StreamInit);
+    SetMethod(target, "SetRf", SetRf);
+    SetMethod(target, "SetFs", SetFs);
     SetMethod(target, "ResetUpdateFlags", ResetUpdateFlags);
     SetMethod(target, "DecimateControl", DecimateControl);
     SetMethod(target, "SetSyncUpdateSampleNum", SetSyncUpdateSampleNum);
     SetMethod(target, "SetSyncUpdatePeriod", SetSyncUpdatePeriod);
+    SetMethod(target, "ReInit", ReInit);
     // Settings
     SetMethod(target, "DebugEnable", DebugEnable);
     SetMethod(target, "SetPpm", SetPpm);
