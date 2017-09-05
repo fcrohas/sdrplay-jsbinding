@@ -1,4 +1,4 @@
-const SDRPlay = require('./build/Debug/sdrplay');
+const SDRPlay = require('./build/Release/sdrplay');
 
 const ErrT = {
 	mir_sdr_Success : 0,
@@ -94,8 +94,8 @@ const AgcControlT = {
 
 const GainMessageIdT = {
 	mir_sdr_GAIN_MESSAGE_START_ID : 0x80000000,
-	mir_sdr_ADC_OVERLOAD_DETECTED : mir_sdr_GAIN_MESSAGE_START_ID + 1,
-	mir_sdr_ADC_OVERLOAD_CORRECTED : mir_sdr_GAIN_MESSAGE_START_ID + 2
+	mir_sdr_ADC_OVERLOAD_DETECTED : this.mir_sdr_GAIN_MESSAGE_START_ID + 1,
+	mir_sdr_ADC_OVERLOAD_CORRECTED : this.mir_sdr_GAIN_MESSAGE_START_ID + 2
 };
 
 const MinGainReductionT = {

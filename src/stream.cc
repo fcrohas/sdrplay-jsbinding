@@ -174,7 +174,7 @@ namespace sdrplay {
 		}
 
 		uv_cond_wait(&isStreamRunning, &request.async_lock);
-		uv_mutex_unlock(&request.async_lock);
+		uv_mutex_unlock(&request.async_lock);		
 		uv_close((uv_handle_t*)request.async, NULL);
 		if (request.sdrplay.mode) {
 			free(request.sdrplay.data_buffer);
@@ -344,7 +344,7 @@ namespace sdrplay {
 	void ReInit(const Nan::FunctionCallbackInfo<v8::Value>& args) {
 	  Nan::HandleScope scope;
 	  Isolate* isolate = args.GetIsolate();
-	  if ((args.Length() != 11) && (args.Length() != 13)) {
+	  if (args.Length() != 11) {
 	    // Throw an Error that is passed back to JavaScript
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
