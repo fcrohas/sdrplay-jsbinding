@@ -1,0 +1,30 @@
+{
+  "name": "sdrplay-bindings",
+  "version": "1.0.0",
+  "description": "This is sdrplay driver bindings from native http://www.sdrplay.com drivers",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "node-gyp rebuild"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fcrohas/sdrplay-jsbinding.git"
+  },
+  "keywords": [
+    "sdrplay",
+    "nodejs",
+    "node-sdr",
+    "drivers"
+  ],
+  "author": "fcrohas@gmail.com",
+  "license": "GPL-3.0",
+  "gypfile": true,
+  "bugs": {
+    "url": "https://github.com/fcrohas/sdrplay-jsbinding/issues"
+  },
+  "homepage": "https://github.com/fcrohas/sdrplay-jsbinding#readme"
+}
