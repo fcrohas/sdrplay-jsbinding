@@ -183,7 +183,7 @@ namespace sdrplay {
 			&streamParams.gRdBsystem, 
 			streamParams.setGrMode, 
 			&streamParams.samplesPerPacket, 
-			sdrplay_streamCallback, sdrplay_gainCallback, // Callbacks
+			(mir_sdr_StreamCallback_t)sdrplay_streamCallback, (mir_sdr_GainChangeCallback_t)sdrplay_gainCallback, // Callbacks
 			&request);
 		if (error!= mir_sdr_Success) {
 			cout << "Error while initializing stream. Error : " << error << "\r\n";
@@ -215,22 +215,22 @@ namespace sdrplay {
 	  request_t request;
 	  request.async = new uv_async_t();
 	  stream_params_t streamParams;
-	  streamParams.gRdB = args[0]->Uint32Value();
-	  streamParams.fsMHz = args[1]->NumberValue();
-	  streamParams.rfMHz = args[2]->NumberValue();
-	  streamParams.bwType = static_cast<mir_sdr_Bw_MHzT>(args[3]->Uint32Value());
-	  streamParams.ifType = static_cast<mir_sdr_If_kHzT>(args[4]->Uint32Value());
-	  streamParams.LNAState = args[5]->Uint32Value();
-	  streamParams.gRdBsystem = args[6]->Uint32Value();
-	  streamParams.setGrMode = static_cast<mir_sdr_SetGrModeT>(args[7]->Uint32Value());
-	  streamParams.samplesPerPacket = args[8]->Uint32Value();
+	  streamParams.gRdB = args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  streamParams.fsMHz = args[1]->NumberValue(Nan::GetCurrentContext()).FromJust();
+	  streamParams.rfMHz = args[2]->NumberValue(Nan::GetCurrentContext()).FromJust();
+	  streamParams.bwType = static_cast<mir_sdr_Bw_MHzT>(args[3]->Uint32Value(Nan::GetCurrentContext()).FromJust());
+	  streamParams.ifType = static_cast<mir_sdr_If_kHzT>(args[4]->Uint32Value(Nan::GetCurrentContext()).FromJust());
+	  streamParams.LNAState = args[5]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  streamParams.gRdBsystem = args[6]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  streamParams.setGrMode = static_cast<mir_sdr_SetGrModeT>(args[7]->Uint32Value(Nan::GetCurrentContext()).FromJust());
+	  streamParams.samplesPerPacket = args[8]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 	  // Context
 	  request.streamCallback = new Nan::Callback(args[9].As<Function>());
 	  request.gainCallback = new Nan::Callback(args[10].As<Function>());
 	  request.sdrplay.mode = args.Length() == 13 ? true : false;
 	  if (request.sdrplay.mode) {
-	  	request.sdrplay.buffer_size = args[11]->Uint32Value();
-	  	request.sdrplay.buffer_count = args[12]->Uint32Value();
+	  	request.sdrplay.buffer_size = args[11]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  	request.sdrplay.buffer_count = args[12]->Uint32Value(Nan::GetCurrentContext()).FromJust();
 	  }
 	  uv_cond_init(&isStreamRunning);
 	  uv_mutex_init(&request.async_lock);
@@ -271,7 +271,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetRf(args[0]->NumberValue(), args[1]->Int32Value(), args[2]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_SetRf(args[0]->NumberValue(Nan::GetCurrentContext()).FromJust(), args[1]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[2]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to SetRf stream.")));
@@ -287,7 +287,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetFs(args[0]->NumberValue(), args[1]->Int32Value(), args[2]->Int32Value(), args[3]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_SetFs(args[0]->NumberValue(Nan::GetCurrentContext()).FromJust(), args[1]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[2]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[3]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to SetFs stream.")));
@@ -303,7 +303,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_ResetUpdateFlags(args[0]->Int32Value(), args[1]->Int32Value(), args[2]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_ResetUpdateFlags(args[0]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[1]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[2]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to ResetUpdateFlags stream.")));
@@ -319,7 +319,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetSyncUpdateSampleNum(args[0]->Uint32Value());
+	  mir_sdr_ErrT error = mir_sdr_SetSyncUpdateSampleNum(args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to SetSyncUpdateSampleNum stream.")));
@@ -335,7 +335,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetSyncUpdatePeriod(args[0]->Uint32Value());
+	  mir_sdr_ErrT error = mir_sdr_SetSyncUpdatePeriod(args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to SetSyncUpdatePeriod stream.")));
@@ -351,7 +351,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_DecimateControl(args[0]->Uint32Value(), args[1]->Uint32Value(), args[2]->Uint32Value());
+	  mir_sdr_ErrT error = mir_sdr_DecimateControl(args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust(), args[1]->Uint32Value(Nan::GetCurrentContext()).FromJust(), args[2]->Uint32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to DecimateControl stream.")));
@@ -369,17 +369,17 @@ namespace sdrplay {
 	    return;
 	  }  
 	  // Initialize parameters
-	  int gRdB = args[0]->Uint32Value();
-	  double fsMHz = args[1]->NumberValue();
-	  double rfMHz = args[2]->NumberValue();
-	  mir_sdr_Bw_MHzT bwType = static_cast<mir_sdr_Bw_MHzT>(args[3]->Uint32Value());
-	  mir_sdr_If_kHzT ifType = static_cast<mir_sdr_If_kHzT>(args[4]->Uint32Value());
-	  mir_sdr_LoModeT loMode = static_cast<mir_sdr_LoModeT>(args[5]->Uint32Value());
-	  int LNAState = args[6]->Uint32Value();
-	  int gRdBsystem = args[7]->Uint32Value();
-	  mir_sdr_SetGrModeT setGrMode = static_cast<mir_sdr_SetGrModeT>(args[8]->Uint32Value());
-	  int samplesPerPacket = args[9]->Uint32Value();
-	  mir_sdr_ReasonForReinitT reasonForReinit = static_cast<mir_sdr_ReasonForReinitT>(args[10]->Uint32Value());
+	  int gRdB = args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  double fsMHz = args[1]->NumberValue(Nan::GetCurrentContext()).FromJust();
+	  double rfMHz = args[2]->NumberValue(Nan::GetCurrentContext()).FromJust();
+	  mir_sdr_Bw_MHzT bwType = static_cast<mir_sdr_Bw_MHzT>(args[3]->Uint32Value(Nan::GetCurrentContext()).FromJust());
+	  mir_sdr_If_kHzT ifType = static_cast<mir_sdr_If_kHzT>(args[4]->Uint32Value(Nan::GetCurrentContext()).FromJust());
+	  mir_sdr_LoModeT loMode = static_cast<mir_sdr_LoModeT>(args[5]->Uint32Value(Nan::GetCurrentContext()).FromJust());
+	  int LNAState = args[6]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  int gRdBsystem = args[7]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  mir_sdr_SetGrModeT setGrMode = static_cast<mir_sdr_SetGrModeT>(args[8]->Uint32Value(Nan::GetCurrentContext()).FromJust());
+	  int samplesPerPacket = args[9]->Uint32Value(Nan::GetCurrentContext()).FromJust();
+	  mir_sdr_ReasonForReinitT reasonForReinit = static_cast<mir_sdr_ReasonForReinitT>(args[10]->Uint32Value(Nan::GetCurrentContext()).FromJust());
 	  mir_sdr_ErrT error = mir_sdr_Reinit(&gRdB, fsMHz, rfMHz, bwType, ifType, loMode, LNAState, &gRdBsystem, setGrMode, &samplesPerPacket, reasonForReinit);
 	  // if (error!= mir_sdr_Success) {
 	  //   isolate->ThrowException(Exception::TypeError(

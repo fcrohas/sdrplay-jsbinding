@@ -10,7 +10,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Missing argument.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_RSPII_AntennaControl((mir_sdr_RSPII_AntennaSelectT)args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_RSPII_AntennaControl((mir_sdr_RSPII_AntennaSelectT)args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to select antenna.")));
@@ -26,7 +26,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Missing argument.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_RSPII_ExternalReferenceControl(args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_RSPII_ExternalReferenceControl(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to select external reference.")));
@@ -42,7 +42,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Missing argument.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_RSPII_BiasTControl(args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_RSPII_BiasTControl(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to select bias-t.")));
@@ -58,7 +58,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Missing argument.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_RSPII_RfNotchEnable(args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_RSPII_RfNotchEnable(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to select notch filter.")));
@@ -74,7 +74,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Missing argument.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_AmPortSelect(args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_AmPortSelect(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to select am port.")));
