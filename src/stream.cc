@@ -42,7 +42,7 @@ namespace sdrplay {
 	}
 
 
-	void sdrplay_streamCallback(short *xi, short *xq, unsigned int firstSampleNum,int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset,void *cbContext) {
+	void sdrplay_streamCallback(short *xi, short *xq, unsigned int firstSampleNum,int grChanged, int rfChanged, int fsChanged, unsigned int numSamples, unsigned int reset,unsigned int hwRemoved,void *cbContext) {
 	  if (numSamples == 0) {
 	    return;
 	  }
@@ -59,32 +59,48 @@ namespace sdrplay {
 	  if (request->sdrplay.mode) {
 	  	sdrplay_t *sdrplay = &request->sdrplay;
 	  	// buffering
-	  	unsigned int end = sdrplay->data_index + numSamples * 2;
-	  	int count2 = end - sdrplay->buffer_size * sdrplay->buffer_count;
-	  	if (count2 < 0) count2 = 0; 
-	  	int count1 = numSamples * 2 - count2;
-	  	int new_buffer_flag = ((sdrplay->data_index & (sdrplay->buffer_size - 1)) < (end & (sdrplay->buffer_size - 1))) ? 0 : 1;
+	  	sdrplay->data_end = sdrplay->data_index + numSamples * 2;
+	  	int count2 = sdrplay->data_end - sdrplay->buffer_size * sdrplay->buffer_count; // count2 is samples wrapping around to start of buf
+	  	if (count2 < 0) count2 = 0;  
+	  	int count1 = numSamples * 2 - count2; // count1 is samples fitting before the end of buf
+		// flag is set if this packet takes us past a multiple of ASYNC_BUF_SIZE
+	  	int new_buffer_flag = (sdrplay->data_index / sdrplay->buffer_size) == (sdrplay->data_end / sdrplay->buffer_size ) ? 0 : 1;
+		// now interleave data from I/Q into circular buffer
 	  	int input_index = 0;
-	  	for (int i = 0; i < count1 >> 1; i++) {
-	  		sdrplay->data_buffer[sdrplay->data_index++] = xi[input_index];
-	  		sdrplay->data_buffer[sdrplay->data_index++] = xq[input_index];
+		for (int i = 0, j = sdrplay->data_index; i < count1 / 2; i++) {
+	  		sdrplay->data_buffer[j++] = xi[input_index];
+	  		sdrplay->data_buffer[j++] = xq[input_index];
 	  		input_index++;
 	  	}
+
+		sdrplay->data_index += count1;
 
 	  	if (sdrplay->data_index >= sdrplay->buffer_size * sdrplay->buffer_count) {
 	  		sdrplay->data_index = 0;
 	  	}
 
-	  	for (int i = 0; i < count2 >> 1; i++) {
-	  		sdrplay->data_buffer[sdrplay->data_index++] = xi[input_index];
-	  		sdrplay->data_buffer[sdrplay->data_index++] = xq[input_index];
+		for (int i = 0, j = sdrplay->data_index; i < count2 / 2; i++) {
+	  		sdrplay->data_buffer[j++] = xi[input_index];
+	  		sdrplay->data_buffer[j++] = xq[input_index];
 	  		input_index++;
 	  	}
+
+		sdrplay->data_index += count2;
+
+		// send ASYNC_BUF_SIZE samples downstream, if available
 	  	if(new_buffer_flag) {
-			sdrplay->data_end = sdrplay->data_index + sdrplay->buffer_size * (sdrplay->buffer_count - 1);
-			sdrplay->data_end &= sdrplay->buffer_size * sdrplay->buffer_count - 1;
-			sdrplay->data_end &= ~(sdrplay->buffer_size - 1);	  		
-			
+			/* go back by one buffer length, then round down further to start of buffer */
+			sdrplay->data_end = sdrplay->data_index - sdrplay->buffer_size;
+			if (sdrplay->data_end<0) sdrplay->data_end += sdrplay->buffer_size * sdrplay->buffer_count;
+			sdrplay->data_end -= sdrplay->data_end % sdrplay->buffer_size;
+		        for (int i = 0; i < sdrplay->buffer_size ; i++) {
+			  if (sdrplay->data_end + i > sdrplay->buffer_size * sdrplay->buffer_count) {
+			    sdrplay->current_buffer[i] = sdrplay->data_buffer[sdrplay->data_end + i - sdrplay->buffer_size * sdrplay->buffer_count];
+			  } else {
+			    sdrplay->current_buffer[i] = sdrplay->data_buffer[i];
+			  }	  
+			}
+
 			request->fromStreamCallback = true;
 			request->fromGainCallback = false;
 			request->async->data = request;
@@ -122,7 +138,7 @@ namespace sdrplay {
 		} else if (request->fromStreamCallback) {
 			const unsigned argc = 8;
 			if (request->sdrplay.mode) {
-				Local<Value> argv[] = { CopyBuffer((char*)&request->sdrplay.data_buffer[request->sdrplay.data_end], request->sdrplay.buffer_size * 2).ToLocalChecked(),  
+				Local<Value> argv[] = { CopyBuffer((char*)&request->sdrplay.current_buffer[0], request->sdrplay.buffer_size * 2).ToLocalChecked(),  
 					  New<v8::Integer>( request->sdrplay.buffer_size),
 					  New<v8::Integer>( request->sdrplay.firstSampleNum),
 					  New<v8::Integer>( request->sdrplay.grChanged), 
@@ -151,6 +167,7 @@ namespace sdrplay {
 		// Initialize array content
 		if (request.sdrplay.mode) {
 			request.sdrplay.data_buffer = (short *)calloc(request.sdrplay.buffer_size * request.sdrplay.buffer_count, sizeof(short));
+			request.sdrplay.current_buffer = (short *)calloc(request.sdrplay.buffer_size, sizeof(short));
 			request.sdrplay.data_index = 0;
 		} else {
 			request.sdrplay.xi = (short *)calloc(streamParams.samplesPerPacket, sizeof(short));
@@ -178,6 +195,7 @@ namespace sdrplay {
 		uv_close((uv_handle_t*)request.async, NULL);
 		if (request.sdrplay.mode) {
 			free(request.sdrplay.data_buffer);
+			free(request.sdrplay.current_buffer);
 		} else {
 			free(request.sdrplay.xi);
 			free(request.sdrplay.xq);
@@ -363,12 +381,12 @@ namespace sdrplay {
 	  int samplesPerPacket = args[9]->Uint32Value();
 	  mir_sdr_ReasonForReinitT reasonForReinit = static_cast<mir_sdr_ReasonForReinitT>(args[10]->Uint32Value());
 	  mir_sdr_ErrT error = mir_sdr_Reinit(&gRdB, fsMHz, rfMHz, bwType, ifType, loMode, LNAState, &gRdBsystem, setGrMode, &samplesPerPacket, reasonForReinit);
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::TypeError(
-	        String::NewFromUtf8(isolate, "Unable to ReInit stream.")));
-	    return;
-	  }
-	  args.GetReturnValue().SetNull();	  
+	  // if (error!= mir_sdr_Success) {
+	  //   isolate->ThrowException(Exception::TypeError(
+	  //       String::NewFromUtf8(isolate, "Unable to ReInit stream.")));
+	  //   return;
+	  // }
+	  args.GetReturnValue().Set(error);	  
 	}
 
 }
