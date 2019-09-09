@@ -25,11 +25,12 @@ namespace sdrplay {
 		unsigned int gRdB;
 		unsigned int lnaGRdB;
 		short *data_buffer;
-		unsigned int data_end;
+		int data_end;
 		unsigned int data_index;
 		unsigned int buffer_size;
 		unsigned int buffer_count;
 		bool mode;
+		short *current_buffer;
 	};
 	/* Device Info */
 	void GetDevices(const Nan::FunctionCallbackInfo<v8::Value>& args);

@@ -47,7 +47,8 @@ const ReasonForReinitT = {
 	mir_sdr_CHANGE_RF_FREQ : 0x04,
 	mir_sdr_CHANGE_BW_TYPE : 0x08,
 	mir_sdr_CHANGE_IF_TYPE : 0x10,
-	mir_sdr_CHANGE_LO_MODE : 0x20
+	mir_sdr_CHANGE_LO_MODE : 0x20,
+	mir_sdr_CHANGE_AM_PORT : 0x40
 };
 
 const LoModeT = {
