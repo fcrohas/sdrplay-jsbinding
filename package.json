@@ -26,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/fcrohas/sdrplay-jsbinding/issues"
   },
-  "homepage": "https://github.com/fcrohas/sdrplay-jsbinding#readme"
+  "homepage": "https://github.com/fcrohas/sdrplay-jsbinding#readme",
+  "dependencies": {
+    "nan": "^2.14.0"
+  }
 }

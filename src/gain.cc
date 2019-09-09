@@ -10,7 +10,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetGr(args[0]->Int32Value(), args[1]->Int32Value(), args[2]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_SetGr(args[0]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[1]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[2]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	  	cout << "error=" << error << "\r\n";
 	    isolate->ThrowException(Exception::TypeError(
@@ -27,7 +27,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetGrParams(args[0]->Int32Value(), args[1]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_SetGrParams(args[0]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[1]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
@@ -43,9 +43,9 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_AgcControl((mir_sdr_AgcControlT)args[0]->Int32Value(), args[1]->Int32Value(), args[2]->Int32Value(), 
-	  											args[3]->Uint32Value(), args[4]->Uint32Value(), args[5]->Int32Value(),
-	  											args[6]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_AgcControl((mir_sdr_AgcControlT)args[0]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[1]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[2]->Int32Value(Nan::GetCurrentContext()).FromJust(), 
+	  											args[3]->Uint32Value(Nan::GetCurrentContext()).FromJust(), args[4]->Uint32Value(Nan::GetCurrentContext()).FromJust(), args[5]->Int32Value(Nan::GetCurrentContext()).FromJust(),
+	  											args[6]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to deinitialize stream.")));
@@ -79,7 +79,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_RSP_SetGr(args[0]->Int32Value(), args[1]->Int32Value(), args[2]->Int32Value(), args[3]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_RSP_SetGr(args[0]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[1]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[2]->Int32Value(Nan::GetCurrentContext()).FromJust(), args[3]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	  	cout << "error=" << error << "\r\n";
 	    isolate->ThrowException(Exception::TypeError(
@@ -96,7 +96,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong argument count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_RSP_SetGrLimits((mir_sdr_MinGainReductionT)args[0]->Int32Value());
+	  mir_sdr_ErrT error = mir_sdr_RSP_SetGrLimits((mir_sdr_MinGainReductionT)args[0]->Int32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	  	cout << "error=" << error << "\r\n";
 	    isolate->ThrowException(Exception::TypeError(

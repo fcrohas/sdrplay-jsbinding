@@ -10,7 +10,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_DebugEnable(args[0]->Uint32Value());
+	  mir_sdr_ErrT error = mir_sdr_DebugEnable(args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to enable debug mode.")));
@@ -26,9 +26,9 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Missing max device argument.")));
 	    return;
 	  }  
-	  mir_sdr_DeviceT devices[args[0]->IntegerValue()];
+	  mir_sdr_DeviceT devices[args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust()];
 	  unsigned int numDevs;
-	  mir_sdr_ErrT error = mir_sdr_GetDevices(&devices[0], &numDevs, args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_GetDevices(&devices[0], &numDevs, args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::TypeError(
 	        String::NewFromUtf8(isolate, "Unable to get list of connected devices.")));
@@ -37,7 +37,7 @@ namespace sdrplay {
 	  Local<Array> devArray = Array::New(isolate);
 	  // Fill result array
 	  for (uint i=0;i<numDevs;i++) {
-	  	Handle<Object> devObj = Object::New(isolate);
+	  	Local<Object> devObj = Object::New(isolate);
 	  	devObj->Set(String::NewFromUtf8(isolate,"SerNo"), String::NewFromUtf8(isolate,devices[0].SerNo));
 	  	devObj->Set(String::NewFromUtf8(isolate,"DevNm"), String::NewFromUtf8(isolate,devices[0].DevNm));
 	  	devObj->Set(String::NewFromUtf8(isolate,"hwVer"), Number::New(isolate,devices[0].hwVer));

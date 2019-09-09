@@ -10,6 +10,7 @@
       		"-L/usr/local/lib"
       	],
       	"cflags":[
+		"-Wno-deprecated-declarations"
         ]
       },
       "sources": [ "src/sdrplay.cc", "src/deviceinfo.cc", "src/stream.cc", "src/settings.cc", "src/rsp2.cc", "src/gain.cc" ],

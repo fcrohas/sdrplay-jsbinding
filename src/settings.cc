@@ -9,7 +9,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetDeviceIdx(args[0]->Uint32Value());
+	  mir_sdr_ErrT error = mir_sdr_SetDeviceIdx(args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to set device index.")));
@@ -42,7 +42,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetDcMode(args[0]->IntegerValue(), args[1]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_SetDcMode(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust(), args[1]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to set DC mode.")));
@@ -58,7 +58,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetDcTrackTime(args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_SetDcTrackTime(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to set DC track time value.")));
@@ -74,7 +74,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_DCoffsetIQimbalanceControl(args[0]->IntegerValue(), args[1]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_DCoffsetIQimbalanceControl(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust(), args[1]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to set DC track time value.")));
@@ -90,7 +90,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetPpm(args[0]->NumberValue());
+	  mir_sdr_ErrT error = mir_sdr_SetPpm(args[0]->NumberValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to set PPM value.")));
@@ -106,7 +106,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetLoMode((mir_sdr_LoModeT )args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_SetLoMode((mir_sdr_LoModeT )args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to set PPM value.")));
@@ -122,7 +122,7 @@ namespace sdrplay {
 	        String::NewFromUtf8(isolate, "Wrong arguments count.")));
 	    return;
 	  }  
-	  mir_sdr_ErrT error = mir_sdr_SetTransferMode((mir_sdr_TransferModeT)args[0]->IntegerValue());
+	  mir_sdr_ErrT error = mir_sdr_SetTransferMode((mir_sdr_TransferModeT)args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
 	  if (error!= mir_sdr_Success) {
 	    isolate->ThrowException(Exception::Error(
 	        String::NewFromUtf8(isolate, "Unable to set PPM value.")));
