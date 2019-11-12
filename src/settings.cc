@@ -10,11 +10,7 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_SetDeviceIdx(args[0]->Uint32Value(Nan::GetCurrentContext()).FromJust());
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to set device index.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 
 	void ReleaseDeviceIdx(const Nan::FunctionCallbackInfo<v8::Value>& args) {
@@ -26,11 +22,7 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_ReleaseDeviceIdx();
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to release device index.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 
 
@@ -43,11 +35,7 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_SetDcMode(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust(), args[1]->IntegerValue(Nan::GetCurrentContext()).FromJust());
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to set DC mode.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 
 	void SetDcTrackTime(const Nan::FunctionCallbackInfo<v8::Value>& args) {
@@ -59,11 +47,7 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_SetDcTrackTime(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to set DC track time value.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 
 	void DCoffsetIQimbalanceControl(const Nan::FunctionCallbackInfo<v8::Value>& args) {
@@ -75,11 +59,7 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_DCoffsetIQimbalanceControl(args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust(), args[1]->IntegerValue(Nan::GetCurrentContext()).FromJust());
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to set DC track time value.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 
 	void SetPpm(const Nan::FunctionCallbackInfo<v8::Value>& args) {
@@ -91,11 +71,7 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_SetPpm(args[0]->NumberValue(Nan::GetCurrentContext()).FromJust());
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to set PPM value.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 
 	void SetLoMode(const Nan::FunctionCallbackInfo<v8::Value>& args) {
@@ -107,11 +83,7 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_SetLoMode((mir_sdr_LoModeT )args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to set PPM value.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 
 	void SetTransferMode(const Nan::FunctionCallbackInfo<v8::Value>& args) {
@@ -123,10 +95,6 @@ namespace sdrplay {
 	    return;
 	  }  
 	  mir_sdr_ErrT error = mir_sdr_SetTransferMode((mir_sdr_TransferModeT)args[0]->IntegerValue(Nan::GetCurrentContext()).FromJust());
-	  if (error!= mir_sdr_Success) {
-	    isolate->ThrowException(Exception::Error(
-	        String::NewFromUtf8(isolate, "Unable to set PPM value.")));
-	    return;
-	  }
+	  args.GetReturnValue().Set(error);
 	}
 }

@@ -4,10 +4,10 @@
   "description": "This is sdrplay driver bindings from native http://www.sdrplay.com drivers",
   "main": "index.js",
   "directories": {
-    "test": "test"
+    "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha tests --recursive true --watch",
     "install": "node-gyp rebuild"
   },
   "repository": {
@@ -29,5 +29,9 @@
   "homepage": "https://github.com/fcrohas/sdrplay-jsbinding#readme",
   "dependencies": {
     "nan": "^2.14.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha-logger": "^1.0.6"
   }
 }

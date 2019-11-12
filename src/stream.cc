@@ -21,7 +21,7 @@ namespace sdrplay {
 	  uv_mutex_t async_lock; 
 	  sdrplay_t sdrplay;
 	  Callback* streamCallback;
-	  Callback* gainCallback; 
+	  Callback* gainCallback;
 	  bool fromGainCallback = false;
 	  bool fromStreamCallback = false;
 	  thread* streamWorker;
@@ -189,10 +189,12 @@ namespace sdrplay {
 			cout << "Error while initializing stream. Error : " << error << "\r\n";
 			return;
 		}
-
+		// Initialization done
+		// cout << "Waiting stream ending" << endl;
 		uv_cond_wait(&isStreamRunning, &request.async_lock);
 		uv_mutex_unlock(&request.async_lock);		
 		uv_close((uv_handle_t*)request.async, NULL);
+		// cout << "Freeing data ..." << endl;
 		if (request.sdrplay.mode) {
 			free(request.sdrplay.data_buffer);
 			free(request.sdrplay.current_buffer);
@@ -200,6 +202,7 @@ namespace sdrplay {
 			free(request.sdrplay.xi);
 			free(request.sdrplay.xq);
 		}
+		// cout << "Data freed" << endl;
 	}
 
 	void StreamInit(const Nan::FunctionCallbackInfo<v8::Value>& args) {
@@ -254,13 +257,13 @@ namespace sdrplay {
 	    return;
 	  }  
 	  //streamWorker->attach();
+	  uv_cond_signal(&isStreamRunning);
 	  mir_sdr_ErrT error = mir_sdr_StreamUninit();
 	  if (error!= mir_sdr_Success) {
 		cout << "Error while deinitializing stream. Error : " << error << "\r\n";			
 		return;
 	  }
-	  uv_cond_signal(&isStreamRunning);
-	  uv_cond_destroy(&isStreamRunning);
+	  //uv_cond_destroy(&isStreamRunning);
 	}
 
 	void SetRf(const Nan::FunctionCallbackInfo<v8::Value>& args) {
